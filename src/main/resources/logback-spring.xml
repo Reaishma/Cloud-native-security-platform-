@@ -1,0 +1,66 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{eventType}] [%X{userId}] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- SumoLogic Appender for Application Logs -->
+    <appender name="SUMOLOGIC" class="com.sumologic.logback.http.SumoLogicAppender">
+        <url>${SUMOLOGIC_URL}</url>
+        <sourceName>cloud-native-app</sourceName>
+        <sourceCategory>production/application</sourceCategory>
+        <sourceHost>replit-app</sourceHost>
+        <compress>true</compress>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{eventType}] [%X{userId}] - %msg%n</pattern>
+        </layout>
+    </appender>
+    
+    <!-- SumoLogic Appender for Security Logs -->
+    <appender name="SUMOLOGIC_SECURITY" class="com.sumologic.logback.http.SumoLogicAppender">
+        <url>${SUMOLOGIC_URL}</url>
+        <sourceName>cloud-native-app-security</sourceName>
+        <sourceCategory>production/security</sourceCategory>
+        <sourceHost>replit-app</sourceHost>
+        <compress>true</compress>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} SECURITY [%X{eventType}] [%X{userId}] - %msg%n</pattern>
+        </layout>
+    </appender>
+    
+    <!-- SumoLogic Appender for Performance Logs -->
+    <appender name="SUMOLOGIC_PERFORMANCE" class="com.sumologic.logback.http.SumoLogicAppender">
+        <url>${SUMOLOGIC_URL}</url>
+        <sourceName>cloud-native-app-performance</sourceName>
+        <sourceCategory>production/performance</sourceCategory>
+        <sourceHost>replit-app</sourceHost>
+        <compress>true</compress>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} PERFORMANCE [%X{operation}] [%X{duration}] - %msg%n</pattern>
+        </layout>
+    </appender>
+    
+    <!-- Security Logger -->
+    <logger name="SECURITY" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="SUMOLOGIC_SECURITY"/>
+    </logger>
+    
+    <!-- Performance Logger -->
+    <logger name="PERFORMANCE" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="SUMOLOGIC_PERFORMANCE"/>
+    </logger>
+    
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="SUMOLOGIC"/>
+    </root>
+</configuration>
