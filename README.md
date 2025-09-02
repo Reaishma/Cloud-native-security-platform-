@@ -27,8 +27,7 @@ cloud-native-app/
 │           └── README.md                   # This documentation file
 ├── target/                                 # Maven build output directory
 ├── pom.xml                                # Maven project configuration
-├── .replit                                # Replit workspace configuration
-└── replit.nix                            # Nix environment configuration
+
 ```
 
 ### Java Package Structure
@@ -399,6 +398,7 @@ This enterprise application is proprietary software. All rights reserved.
 ## Contact Information
 
 For technical support, security issues, or general inquiries:
-- **Technical Support**: support@yourcompany.com
-- **Security Team**: security@yourcompany.com
-- **Development Team**: dev@yourcompany.com
+- **Technical Support**
+- **Security Team** 
+- **Development Team**
+- contact : **vra.9618@gmail.com**
