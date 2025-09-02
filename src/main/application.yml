@@ -1,0 +1,65 @@
+
+server:
+  port: 5000
+  address: 0.0.0.0
+  servlet:
+    context-path: /
+  error:
+    include-stacktrace: never
+    include-message: never
+
+spring:
+  application:
+    name: cloud-native-app
+  
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:https://your-auth-provider.com}
+
+logging:
+  level:
+    com.cloudnative: INFO
+    SECURITY: WARN
+    PERFORMANCE: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{eventType}] [%X{userId}] %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# AWS Configuration
+aws:
+  region: ${AWS_REGION:us-east-1}
+  
+# Azure Configuration  
+azure:
+  subscription-id: ${AZURE_SUBSCRIPTION_ID:your-subscription-id}
+
+# SumoLogic Configuration
+sumologic:
+  url: ${SUMOLOGIC_URL:https://collectors.sumologic.com/receiver/v1/http/your-endpoint}
