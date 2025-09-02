@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Native Security Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: #00ff88;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #b0b0b0;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+        }
+
+        .card h3 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #b0b0b0;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #2a2a2a;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 5px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+            color: #000;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+        }
+
+        .result.success {
+            background: #0a2a0a;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .result.error {
+            background: #2a0a0a;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+
+        .result.info {
+            background: #0a1a2a;
+            border: 1px solid #4488ff;
+            color: #4488ff;
+        }
+
+        .result.warning {
+            background: #2a1a0a;
+            border: 1px solid #ffaa00;
+            color: #ffaa00;
+        }
+
+        .loading {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #00ff88;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+        }
+
+        .status-offline {
+            background: #ff4444;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .logs {
+            background: #0f0f0f;
+            color: #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #2a2a2a;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #2a2a2a;
+            padding-left: 10px;
+        }
+
+        .log-security {
+            border-left-color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        .log-performance {
+            border-left-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .log-info {
+            border-left-color: #4488ff;
+            background: rgba(68, 136, 255, 0.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #0f0f0f;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #2a2a2a;
+            transition: border-color 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #00ff88;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin-top: 5px;
+        }
+
+        .sample-data {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: #b0b0b0;
+        }
+
+        .data-value {
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Cloud Native Security Platform</h1>
+            <p>Enterprise-grade security and monitoring solution</p>
+            <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px; font-size: 14px;">
+                <span>👤 Security Administrator</span>
+                <span>🟢 Connected</span>
+                <span>📊 <span id="live-threats">47</span> Active Threats</span>
+                <span>🛡️ <span id="blocked-today">2,847</span> Blocked Today</span>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Health Check Card -->
+            <div class="card">
+                <h3>
+                    <span class="icon">🏥</span>
+                    System Health Monitor
+                </h3>
+                <button class="btn" onclick="checkHealth()" id="health-btn">Check Health Status</button>
+                <div id="health-result" class="result" style="display: none;"></div>
+                <div class="stats" id="health-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="uptime">24h 15m</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="status">ONLINE</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                </div>
+                <div class="sample-data">
+                    <div class="data-row">
+                        <span class="data-label">CPU Usage:</span>
+                        <span class="data-value" id="cpu-usage">23%</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Memory:</span>
+                        <span class="data-value" id="memory-usage">4.2GB / 8GB</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Network:</span>
+                        <span class="data-value" id="network-usage">↑ 12.4MB/s ↓ 8.7MB/s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Encryption Card -->
+            <div class="card">
+                <h3>
+                    <span class="icon">🔐</span>
+                    AWS KMS Encryption
+                </h3>
+                <div class="form-group">
+                    <label for="encrypt-data">Data to Encrypt:</label>
+                    <textarea id="encrypt-data" rows="3" placeholder="Enter sensitive data to encrypt...">Sample: Database credentials for production</textarea>
+                </div>
+                <button class="btn" onclick="encryptData()" id="encrypt-btn">🔒 Encrypt Data</button>
+                <button class="btn btn-success" onclick="decryptData()" id="decrypt-btn">🔓 Decrypt Data</button>
+                <div id="encryption-result" class="result" style="display: none;"></div>
+                <div class="sample-data">
+                    <div class="data-row">
+                        <span class="data-label">Key ID:</span>
+                        <span class="data-value">arn:aws:kms:us-east-1:***:key/1234</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Encryption Status:</span>
+                        <span class="data-value">AES-256 Active</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Last Operation:</span>
+                        <span class="data-value" id="last-encryption">2024-01-15 14:23:45</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Azure Resources Card -->
+            <div class="card">
+                <h3>
+                    <span class="icon">☁️</span>
+                    Azure Resource Manager
+                </h3>
+                <button class="btn" onclick="listAzureResources()" id="azure-btn">📋 List Resource Groups</button>
+                <div id="azure-result" class="result" style="display: none;"></div>
+                <div class="sample-data">
+                    <div class="data-row">
+                        <span class="data-label">Production-RG:</span>
+                        <span class="data-value">12 resources</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Staging-RG:</span>
+                        <span class="data-value">8 resources</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Development-RG:</span>
+                        <span class="data-value">5 resources</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Total Cost:</span>
+                        <span class="data-value">$1,247.50/month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AWS Organizations Card -->
+            <div class="card">
+                <h3>
+                    <span class="icon">🏢</span>
+                    AWS Organizations
+                </h3>
+                <button class="btn" onclick="listAwsAccounts()" id="aws-org-btn">🏦 List AWS Accounts</button>
+                <div id="aws-org-result" class="result" style="display: none;"></div>
+                <div class="sample-data">
+                    <div class="data-row">
+                        <span class="data-label">Master Account:</span>
+                        <span class="data-value">123456789012</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Production:</span>
+                        <span class="data-value">123456789013</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Development:</span>
+                        <span class="data-value">123456789014</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WAF Security Card -->
+            <div class="card">
+                <h3>
+                    <span class="icon">🛡️</span>
+                    AWS WAF Security
+                </h3>
+                <button class="btn" onclick="createWafAcl()" id="waf-btn">⚠️ Create WAF Web ACL</button>
+                <button class="btn btn-danger" onclick="testSqlInjection()" id="sql-test-btn">🔍 Test SQL Injection</button>
+                <div id="waf-result" class="result" style="display: none;"></div>
+                <div class="sample-data">
+                    <div class="data-row">
+                        <span class="data-label">Active Rules:</span>
+                        <span class="data-value">15</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Blocked Requests:</span>
+                        <span class="data-value">2,847 today</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Protection Level:</span>
+                        <span class="data-value">HIGH</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vulnerability Scanner Card -->
+            <div class="card">
+                <h3>
+                    <span class="icon">🔍</span>
+                    Vulnerability Scanner
+                </h3>
+                <div class="form-group">
+                    <label for="scan-target">Target URL/IP:</label>
+                    <input type="text" id="scan-target" placeholder="https://example.com or 192.168.1.1" value="https://demo.testfire.net">
+                </div>
+                <button class="btn" onclick="runVulnerabilityScan()" id="vuln-btn">🔍 Run Security Scan</button>
+                <div id="vuln-result" class="result" style="display: none;"></div>
+                <div class="sample-data">
+                    <div class="data-row">
+                        <span class="data-label">Last Scan:</span>
+                        <span class="data-value" id="last-scan-time">2024-09-02 09:30:21</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Vulnerabilities Found:</span>
+                        <span class="data-value" id="vuln-count">3 Medium, 1 Low</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Security Score:</span>
+                        <span class="data-value" id="security-score">87/100</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Threat Intelligence Dashboard -->
+            <div class="card">
+                <h3>
+                    <span class="icon">🌐</span>
+                    Global Threat Intelligence
+                </h3>
+                <button class="btn" onclick="refreshThreatIntel()" id="threat-intel-btn">🔄 Refresh Intelligence</button>
+                <div id="threat-intel-result" class="result" style="display: none;"></div>
+                <div class="sample-data">
+                    <div class="data-row">
+                        <span class="data-label">Global Threat Level:</span>
+                        <span class="data-value" id="global-threat-level">ELEVATED</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">New IOCs Today:</span>
+                        <span class="data-value" id="new-iocs">247</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Active Campaigns:</span>
+                        <span class="data-value" id="active-campaigns">12</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Risk Score:</span>
+                        <span class="data-value" id="risk-score">73/100</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Logs Section -->
+        <div class="card">
+            <h3>
+                <span class="icon">📊</span>
+                Real-time Security Logs
+            </h3>
+            <button class="btn" onclick="refreshLogs()" id="logs-btn">🔄 Refresh Logs</button>
+            <div class="logs" id="security-logs">
+                <div class="log-entry log-security">[2024-09-02 14:23:45] SECURITY ALERT: Suspicious login attempt from IP 192.168.1.100</div>
+                <div class="log-entry log-performance">[2024-09-02 14:22:18] PERFORMANCE: System health check completed - All services operational</div>
+                <div class="log-entry log-info">[2024-09-02 14:21:03] INFO: AWS KMS encryption operation successful for key arn:aws:kms:us-east-1:***:key/1234</div>
+                <div class="log-entry log-security">[2024-09-02 14:19:45] SECURITY: WAF blocked SQL injection attempt from IP 203.0.113.42</div>
+                <div class="log-entry log-performance">[2024-09-02 14:18:22] PERFORMANCE: Azure resource monitoring updated - 25 resources monitored</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for storing encrypted data and simulation state
+        let encryptedData = null;
+        let systemMetrics = {
+            cpu: 23,
+            memory: { used: 4.2, total: 8 },
+            network: { up: 12.4, down: 8.7 },
+            uptime: 87315 // seconds
+        };
+
+        // Real-time threat intelligence data
+        let threatIntelligence = {
+            activeThreatCount: 47,
+            blockedAttacks: 2847,
+            suspiciousIPs: ['203.0.113.42', '198.51.100.15', '192.0.2.88'],
+            threatCategories: {
+                'SQL Injection': 1247,
+                'XSS Attempts': 892,
+                'Brute Force': 456,
+                'DDoS': 23,
+                'Malware': 189
+            }
+        };
+
+        // Realistic cloud resource data
+        let cloudResources = {
+            aws: {
+                accounts: [
+                    { id: '123456789012', name: 'Production', status: 'Active', cost: '$847.23', resources: 47 },
+                    { id: '123456789013', name: 'Staging', status: 'Active', cost: '$234.56', resources: 23 },
+                    { id: '123456789014', name: 'Development', status: 'Active', cost: '$165.71', resources: 15 }
+                ]
+            },
+            azure: {
+                resourceGroups: [
+                    { name: 'prod-rg-eastus', location: 'East US', resources: 12, status: 'Healthy', cost: '$456.78' },
+                    { name: 'staging-rg-westus', location: 'West US', resources: 8, status: 'Healthy', cost: '$123.45' },
+                    { name: 'dev-rg-centralus', location: 'Central US', resources: 5, status: 'Warning', cost: '$67.27' }
+                ]
+            }
+        };
+
+        // Authentication simulation
+        let currentUser = {
+            name: 'Security Administrator',
+            role: 'Admin',
+            lastLogin: new Date().toISOString(),
+            permissions: ['read', 'write', 'admin']
+        };
+
+        // Live notifications queue
+        let notifications = [];
+        let notificationId = 1;
+
+        // Utility function to simulate API delay
+        function simulateApiDelay() {
+            return new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+        }
+
+        // Utility function to show loading state
+        function showLoading(buttonId, loadingText = 'Loading...') {
+            const btn = document.getElementById(buttonId);
+            btn.disabled = true;
+            btn.innerHTML = `<span class="loading">⟳</span> ${loadingText}`;
+        }
+
+        // Utility function to hide loading state
+        function hideLoading(buttonId, originalText) {
+            const btn = document.getElementById(buttonId);
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+
+        // Utility function to display results
+        function displayResult(elementId, content, type = 'info') {
+            const resultDiv = document.getElementById(elementId);
+            resultDiv.style.display = 'block';
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = content;
+        }
+
+        // Update system metrics with random variations
+        function updateSystemMetrics() {
+            systemMetrics.cpu = Math.max(5, Math.min(95, systemMetrics.cpu + (Math.random() - 0.5) * 10));
+            systemMetrics.memory.used = Math.max(1, Math.min(7.5, systemMetrics.memory.used + (Math.random() - 0.5) * 0.5));
+            systemMetrics.network.up = Math.max(1, systemMetrics.network.up + (Math.random() - 0.5) * 5);
+            systemMetrics.network.down = Math.max(1, systemMetrics.network.down + (Math.random() - 0.5) * 3);
+            systemMetrics.uptime += 30; // 30 seconds per update
+
+            // Update display
+            document.getElementById('cpu-usage').textContent = `${Math.round(systemMetrics.cpu)}%`;
+            document.getElementById('memory-usage').textContent = `${systemMetrics.memory.used.toFixed(1)}GB / ${systemMetrics.memory.total}GB`;
+            document.getElementById('network-usage').textContent = `↑ ${systemMetrics.network.up.toFixed(1)}MB/s ↓ ${systemMetrics.network.down.toFixed(1)}MB/s`;
+            
+            // Update uptime
+            const hours = Math.floor(systemMetrics.uptime / 3600);
+            const minutes = Math.floor((systemMetrics.uptime % 3600) / 60);
+            document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+        }
+
+        // Health Check Function
+        async function checkHealth() {
+            showLoading('health-btn', 'Checking Health...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Update metrics
+                updateSystemMetrics();
+                
+                // Simulate health check results
+                const services = [
+                    { name: 'API Gateway', status: 'HEALTHY', responseTime: '23ms' },
+                    { name: 'Database', status: 'HEALTHY', responseTime: '45ms' },
+                    { name: 'Cache Layer', status: 'HEALTHY', responseTime: '12ms' },
+                    { name: 'Message Queue', status: 'HEALTHY', responseTime: '18ms' },
+                    { name: 'Authentication Service', status: 'HEALTHY', responseTime: '31ms' }
+                ];
+                
+                // Randomly introduce a warning
+                if (Math.random() < 0.3) {
+                    services[Math.floor(Math.random() * services.length)].status = 'WARNING';
+                }
+                
+                let result = '🏥 SYSTEM HEALTH CHECK RESULTS\n';
+                result += '═'.repeat(40) + '\n\n';
+                
+                services.forEach(service => {
+                    const statusIcon = service.status === 'HEALTHY' ? '✅' : 
+                                     service.status === 'WARNING' ? '⚠️' : '❌';
+                    result += `${statusIcon} ${service.name}: ${service.status} (${service.responseTime})\n`;
+                });
+                
+                result += '\n📊 SYSTEM METRICS:\n';
+                result += `CPU: ${Math.round(systemMetrics.cpu)}% | Memory: ${systemMetrics.memory.used.toFixed(1)}GB/${systemMetrics.memory.total}GB | Uptime: ${Math.floor(systemMetrics.uptime/3600)}h${Math.floor((systemMetrics.uptime%3600)/60)}m\n`;
+                result += `\n🌐 NETWORK: ↑ ${systemMetrics.network.up.toFixed(1)}MB/s ↓ ${systemMetrics.network.down.toFixed(1)}MB/s\n`;
+                result += `\n✅ Overall Status: ${services.every(s => s.status === 'HEALTHY') ? 'ALL SYSTEMS OPERATIONAL' : 'MINOR ISSUES DETECTED'}`;
+                
+                const resultType = services.every(s => s.status === 'HEALTHY') ? 'success' : 'warning';
+                displayResult('health-result', result, resultType);
+                
+            } catch (error) {
+                displayResult('health-result', `❌ Health check failed: ${error.message}`, 'error');
+            }
+            
+            hideLoading('health-btn', 'Check Health Status');
+        }
+
+        // Encryption Function
+        async function encryptData() {
+            const data = document.getElementById('encrypt-data').value.trim();
+            if (!data) {
+                displayResult('encryption-result', '❌ Please enter data to encrypt', 'error');
+                return;
+            }
+            
+            showLoading('encrypt-btn', 'Encrypting...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate AES-256 encryption (base64 encoded)
+                const timestamp = new Date().toISOString();
+                const keyId = 'arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012';
+                
+                // Simple base64 encoding to simulate encryption
+                encryptedData = {
+                    original: data,
+                    encrypted: btoa(data + '|' + timestamp + '|' + keyId),
+                    keyId: keyId,
+                    timestamp: timestamp,
+                    algorithm: 'AES-256-GCM'
+                };
+                
+                let result = '🔒 ENCRYPTION SUCCESSFUL\n';
+                result += '═'.repeat(40) + '\n\n';
+                result += `📝 Original Data Length: ${data.length} characters\n`;
+                result += `🔐 Encrypted Data: ${encryptedData.encrypted}\n\n`;
+                result += `🔑 Key ID: ${keyId}\n`;
+                result += `🕐 Timestamp: ${timestamp}\n`;
+                result += `🛡️ Algorithm: ${encryptedData.algorithm}\n`;
+                result += `📊 Encryption Strength: 256-bit`;
+                
+                displayResult('encryption-result', result, 'success');
+                
+                // Update last operation timestamp
+                document.getElementById('last-encryption').textContent = new Date().toLocaleString();
+                
+            } catch (error) {
+                displayResult('encryption-result', `❌ Encryption failed: ${error.message}`, 'error');
+            }
+            
+            hideLoading('encrypt-btn', '🔒 Encrypt Data');
+        }
+
+        // Decryption Function
+        async function decryptData() {
+            if (!encryptedData) {
+                displayResult('encryption-result', '❌ No encrypted data available. Please encrypt data first.', 'error');
+                return;
+            }
+            
+            showLoading('decrypt-btn', 'Decrypting...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate decryption
+                const decrypted = atob(encryptedData.encrypted).split('|')[0];
+                
+                let result = '🔓 DECRYPTION SUCCESSFUL\n';
+                result += '═'.repeat(40) + '\n\n';
+                result += `📝 Decrypted Data: ${decrypted}\n\n`;
+                result += `🔑 Key ID Used: ${encryptedData.keyId}\n`;
+                result += `🕐 Original Timestamp: ${encryptedData.timestamp}\n`;
+                result += `🛡️ Algorithm: ${encryptedData.algorithm}\n`;
+                result += `✅ Integrity Check: PASSED`;
+                
+                displayResult('encryption-result', result, 'success');
+                
+                // Update last operation timestamp
+                document.getElementById('last-encryption').textContent = new Date().toLocaleString();
+                
+            } catch (error) {
+                displayResult('encryption-result', `❌ Decryption failed: ${error.message}`, 'error');
+            }
+            
+            hideLoading('decrypt-btn', '🔓 Decrypt Data');
+        }
+
+        // Azure Resources Function
+        async function listAzureResources() {
+            showLoading('azure-btn', 'Loading Resources...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate Azure resource groups data
+                const resourceGroups = [
+                    {
+                        name: 'production-rg',
+                        location: 'East US',
+                        resources: 12,
+                        status: 'Active',
+                        cost: '$847.32/month'
+                    },
+                    {
+                        name: 'staging-rg',
+                        location: 'West US 2',
+                        resources: 8,
+                        status: 'Active',
+                        cost: '$234.18/month'
+                    },
+                    {
+                        name: 'development-rg',
+                        location: 'Central US',
+                        resources: 5,
+                        status: 'Active',
+                        cost: '$166.00/month'
+                    },
+                    {
+                        name: 'backup-rg',
+                        location: 'North Europe',
+                        resources: 3,
+                        status: 'Active',
+                        cost: '$89.45/month'
+                    }
+                ];
+                
+                let result = '☁️ AZURE RESOURCE GROUPS\n';
+                result += '═'.repeat(40) + '\n\n';
+                
+                let totalResources = 0;
+                let totalCost = 0;
+                
+                resourceGroups.forEach(rg => {
+                    result += `📁 ${rg.name.toUpperCase()}\n`;
+                    result += `   📍 Location: ${rg.location}\n`;
+                    result += `   📊 Resources: ${rg.resources}\n`;
+                    result += `   💰 Cost: ${rg.cost}\n`;
+                    result += `   🟢 Status: ${rg.status}\n\n`;
+                    
+                    totalResources += rg.resources;
+                    totalCost += parseFloat(rg.cost.replace(/[$\/month,]/g, ''));
+                });
+                
+                result += '📈 SUMMARY:\n';
+                result += `Total Resource Groups: ${resourceGroups.length}\n`;
+                result += `Total Resources: ${totalResources}\n`;
+                result += `Total Monthly Cost: $${totalCost.toFixed(2)}\n`;
+                result += `Active Subscriptions: 1`;
+                
+                displayResult('azure-result', result, 'success');
+                
+            } catch (error) {
+                displayResult('azure-result', `❌ Failed to load Azure resources: ${error.message}`, 'error');
+            }
+            
+            hideLoading('azure-btn', '📋 List Resource Groups');
+        }
+
+        // AWS Organizations Function
+        async function listAwsAccounts() {
+            showLoading('aws-org-btn', 'Loading Accounts...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate AWS Organizations data
+                const accounts = [
+                    {
+                        id: '123456789012',
+                        name: 'Master Account',
+                        email: 'admin@company.com',
+                        status: 'ACTIVE',
+                        joinedDate: '2023-01-15',
+                        ou: 'Root'
+                    },
+                    {
+                        id: '123456789013',
+                        name: 'Production Account',
+                        email: 'prod@company.com',
+                        status: 'ACTIVE',
+                        joinedDate: '2023-02-20',
+                        ou: 'Production OU'
+                    },
+                    {
+                        id: '123456789014',
+                        name: 'Development Account',
+                        email: 'dev@company.com',
+                        status: 'ACTIVE',
+                        joinedDate: '2023-03-10',
+                        ou: 'Development OU'
+                    },
+                    {
+                        id: '123456789015',
+                        name: 'Security Account',
+                        email: 'security@company.com',
+                        status: 'ACTIVE',
+                        joinedDate: '2023-04-05',
+                        ou: 'Security OU'
+                    }
+                ];
+                
+                let result = '🏢 AWS ORGANIZATION ACCOUNTS\n';
+                result += '═'.repeat(40) + '\n\n';
+                
+                accounts.forEach((account, index) => {
+                    const icon = index === 0 ? '👑' : account.name.includes('Production') ? '🏭' : 
+                               account.name.includes('Development') ? '🛠️' : '🔒';
+                    
+                    result += `${icon} ${account.name}\n`;
+                    result += `   🆔 Account ID: ${account.id}\n`;
+                    result += `   📧 Email: ${account.email}\n`;
+                    result += `   📊 Status: ${account.status}\n`;
+                    result += `   📅 Joined: ${account.joinedDate}\n`;
+                    result += `   🏗️ OU: ${account.ou}\n\n`;
+                });
+                
+                result += '📈 ORGANIZATION SUMMARY:\n';
+                result += `Total Accounts: ${accounts.length}\n`;
+                result += `Active Accounts: ${accounts.filter(a => a.status === 'ACTIVE').length}\n`;
+                result += `Master Account ID: ${accounts[0].id}\n`;
+                result += `Organization Units: 4`;
+                
+                displayResult('aws-org-result', result, 'success');
+                
+            } catch (error) {
+                displayResult('aws-org-result', `❌ Failed to load AWS accounts: ${error.message}`, 'error');
+            }
+            
+            hideLoading('aws-org-btn', '🏦 List AWS Accounts');
+        }
+
+        // WAF Web ACL Function
+        async function createWafAcl() {
+            showLoading('waf-btn', 'Creating WAF ACL...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate WAF ACL creation
+                const wafAcl = {
+                    name: 'CloudNativeSecurityACL',
+                    id: 'arn:aws:wafv2:us-east-1:123456789012:global/webacl/CloudNativeSecurityACL/12345678-1234-1234-1234-123456789012',
+                    scope: 'CLOUDFRONT',
+                    rules: [
+                        'AWS-AWSManagedRulesCommonRuleSet',
+                        'AWS-AWSManagedRulesKnownBadInputsRuleSet',
+                        'AWS-AWSManagedRulesSQLiRuleSet',
+                        'AWS-AWSManagedRulesLinuxRuleSet',
+                        'Custom-RateLimitingRule'
+                    ]
+                };
+                
+                let result = '🛡️ WAF WEB ACL CREATED SUCCESSFULLY\n';
+                result += '═'.repeat(40) + '\n\n';
+                result += `📛 Name: ${wafAcl.name}\n`;
+                result += `🆔 ARN: ${wafAcl.id}\n`;
+                result += `🌐 Scope: ${wafAcl.scope}\n`;
+                result += `📅 Created: ${new Date().toISOString()}\n\n`;
+                
+                result += '📋 CONFIGURED RULES:\n';
+                wafAcl.rules.forEach((rule, index) => {
+                    result += `${index + 1}. ${rule}\n`;
+                });
+                
+                result += '\n🔧 PROTECTION FEATURES:\n';
+                result += '✅ SQL Injection Protection\n';
+                result += '✅ Cross-Site Scripting (XSS) Protection\n';
+                result += '✅ Rate Limiting (1000 req/5min)\n';
+                result += '✅ Known Bad Inputs Blocking\n';
+                result += '✅ Geographic Restrictions\n';
+                result += '✅ Bot Control\n\n';
+                
+                result += '⚡ Status: ACTIVE and MONITORING';
+                
+                displayResult('waf-result', result, 'success');
+                
+            } catch (error) {
+                displayResult('waf-result', `❌ Failed to create WAF ACL: ${error.message}`, 'error');
+            }
+            
+            hideLoading('waf-btn', '⚠️ Create WAF Web ACL');
+        }
+
+        // SQL Injection Test Function
+        async function testSqlInjection() {
+            showLoading('sql-test-btn', 'Testing Defenses...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate SQL injection test patterns
+                const testPatterns = [
+                    "' OR '1'='1",
+                    "'; DROP TABLE users; --",
+                    "' UNION SELECT * FROM passwords --",
+                    "1' OR 1=1#",
+                    "admin'--",
+                    "' OR 'x'='x",
+                    "1; EXEC xp_cmdshell('dir')",
+                    "' OR 1=1 LIMIT 1 --"
+                ];
+                
+                let result = '🔍 SQL INJECTION SECURITY TEST\n';
+                result += '═'.repeat(40) + '\n\n';
+                result += '🎯 Testing Common Attack Patterns:\n\n';
+                
+                testPatterns.forEach((pattern, index) => {
+                    const blocked = Math.random() > 0.1; // 90% block rate
+                    const responseTime = Math.floor(Math.random() * 50) + 10;
+                    const status = blocked ? '🛡️ BLOCKED' : '⚠️ ALLOWED';
+                    const color = blocked ? '✅' : '❌';
+                    
+                    result += `${index + 1}. Pattern: "${pattern}"\n`;
+                    result += `   ${color} Status: ${status}\n`;
+                    result += `   ⏱️ Response: ${responseTime}ms\n\n`;
+                });
+                
+                const blockedCount = testPatterns.filter(() => Math.random() > 0.1).length;
+                const allowedCount = testPatterns.length - blockedCount;
+                
+                result += '📊 TEST SUMMARY:\n';
+                result += `Total Patterns Tested: ${testPatterns.length}\n`;
+                result += `🛡️ Blocked: ${blockedCount}\n`;
+                result += `⚠️ Allowed: ${allowedCount}\n`;
+                result += `🎯 Block Rate: ${Math.round((blockedCount/testPatterns.length)*100)}%\n\n`;
+                
+                if (blockedCount >= testPatterns.length * 0.8) {
+                    result += '✅ SECURITY STATUS: EXCELLENT PROTECTION';
+                } else if (blockedCount >= testPatterns.length * 0.6) {
+                    result += '⚠️ SECURITY STATUS: GOOD PROTECTION - CONSIDER TUNING';
+                } else {
+                    result += '❌ SECURITY STATUS: WEAK PROTECTION - IMMEDIATE ACTION REQUIRED';
+                }
+                
+                const resultType = blockedCount >= testPatterns.length * 0.8 ? 'success' : 
+                                 blockedCount >= testPatterns.length * 0.6 ? 'warning' : 'error';
+                
+                displayResult('waf-result', result, resultType);
+                
+            } catch (error) {
+                displayResult('waf-result', `❌ SQL injection test failed: ${error.message}`, 'error');
+            }
+            
+            hideLoading('sql-test-btn', '🔍 Test SQL Injection');
+        }
+
+        // Vulnerability Scanner Function
+        async function runVulnerabilityScan() {
+            const target = document.getElementById('scan-target').value.trim();
+            if (!target) {
+                displayResult('vuln-result', '❌ Please enter a target URL or IP address', 'error');
+                return;
+            }
+            
+            showLoading('vuln-btn', 'Scanning...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate vulnerability scan results
+                const vulnerabilities = [
+                    {
+                        severity: 'MEDIUM',
+                        type: 'Outdated SSL/TLS Configuration',
+                        description: 'Server supports TLS 1.1 which is deprecated',
+                        cvss: '5.3',
+                        solution: 'Disable TLS 1.1 and enable only TLS 1.2+'
+                    },
+                    {
+                        severity: 'MEDIUM',
+                        type: 'Missing Security Headers',
+                        description: 'X-Frame-Options header not set',
+                        cvss: '4.3',
+                        solution: 'Add X-Frame-Options: DENY header'
+                    },
+                    {
+                        severity: 'LOW',
+                        type: 'Information Disclosure',
+                        description: 'Server version information exposed',
+                        cvss: '2.6',
+                        solution: 'Configure server to hide version information'
+                    },
+                    {
+                        severity: 'MEDIUM',
+                        type: 'Weak Cipher Suites',
+                        description: 'Server accepts weak cipher suites',
+                        cvss: '5.0',
+                        solution: 'Configure strong cipher suites only'
+                    }
+                ];
+                
+                // Randomly remove some vulnerabilities
+                const foundVulns = vulnerabilities.filter(() => Math.random() > 0.3);
+                
+                let result = `🔍 VULNERABILITY SCAN RESULTS\n`;
+                result += `Target: ${target}\n`;
+                result += '═'.repeat(40) + '\n\n';
+                
+                if (foundVulns.length === 0) {
+                    result += '✅ NO VULNERABILITIES FOUND\n';
+                    result += 'The target appears to be properly secured.\n\n';
+                    result += '🛡️ Security Score: 95/100';
+                } else {
+                    const severityCounts = {
+                        HIGH: foundVulns.filter(v => v.severity === 'HIGH').length,
+                        MEDIUM: foundVulns.filter(v => v.severity === 'MEDIUM').length,
+                        LOW: foundVulns.filter(v => v.severity === 'LOW').length
+                    };
+                    
+                    result += `🚨 VULNERABILITIES FOUND: ${foundVulns.length}\n\n`;
+                    
+                    foundVulns.forEach((vuln, index) => {
+                        const severityIcon = vuln.severity === 'HIGH' ? '🔴' : 
+                                           vuln.severity === 'MEDIUM' ? '🟡' : '🟢';
+                        
+                        result += `${index + 1}. ${severityIcon} ${vuln.type} (${vuln.severity})\n`;
+                        result += `   📝 ${vuln.description}\n`;
+                        result += `   📊 CVSS Score: ${vuln.cvss}\n`;
+                        result += `   💡 Solution: ${vuln.solution}\n\n`;
+                    });
+                    
+                    result += '📊 SEVERITY BREAKDOWN:\n';
+                    result += `🔴 High: ${severityCounts.HIGH}\n`;
+                    result += `🟡 Medium: ${severityCounts.MEDIUM}\n`;
+                    result += `🟢 Low: ${severityCounts.LOW}\n\n`;
+                    
+                    const score = Math.max(30, 100 - (severityCounts.HIGH * 25 + severityCounts.MEDIUM * 10 + severityCounts.LOW * 5));
+                    result += `🛡️ Security Score: ${score}/100`;
+                }
+                
+                const resultType = foundVulns.length === 0 ? 'success' : 
+                                 foundVulns.filter(v => v.severity === 'HIGH').length > 0 ? 'error' : 'warning';
+                
+                displayResult('vuln-result', result, resultType);
+                
+            } catch (error) {
+                displayResult('vuln-result', `❌ Vulnerability scan failed: ${error.message}`, 'error');
+            }
+            
+            hideLoading('vuln-btn', '🔍 Run Security Scan');
+        }
+
+        // Refresh Security Logs Function
+        async function refreshLogs() {
+            showLoading('logs-btn', 'Refreshing...');
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                const logTypes = ['SECURITY', 'PERFORMANCE', 'INFO', 'WARNING'];
+                const logMessages = [
+                    'Suspicious login attempt detected',
+                    'System health check completed successfully',
+                    'AWS KMS encryption operation completed',
+                    'WAF blocked potential SQL injection',
+                    'Azure resource monitoring updated',
+                    'Failed authentication attempt from suspicious IP',
+                    'Performance metrics within normal parameters',
+                    'SSL certificate expiration warning',
+                    'Firewall rule updated successfully',
+                    'Backup operation completed'
+                ];
+                
+                const logsContainer = document.getElementById('security-logs');
+                const currentTime = new Date();
+                
+                // Add new log entries
+                for (let i = 0; i < 3; i++) {
+                    const logTime = new Date(currentTime.getTime() - i * 30000);
+                    const logType = logTypes[Math.floor(Math.random() * logTypes.length)];
+                    const logMessage = logMessages[Math.floor(Math.random() * logMessages.length)];
+                    const logClass = logType === 'SECURITY' ? 'log-security' : 
+                                   logType === 'PERFORMANCE' ? 'log-performance' : 'log-info';
+                    
+                    const logEntry = document.createElement('div');
+                    logEntry.className = `log-entry ${logClass}`;
+                    logEntry.textContent = `[${logTime.toLocaleString()}] ${logType}: ${logMessage}`;
+                    
+                    logsContainer.insertBefore(logEntry, logsContainer.firstChild);
+                }
+                
+                // Keep only last 20 entries
+                while (logsContainer.children.length > 20) {
+                    logsContainer.removeChild(logsContainer.lastChild);
+                }
+                
+            } catch (error) {
+                console.error('Failed to refresh logs:', error);
+            }
+            
+            hideLoading('logs-btn', '🔄 Refresh Logs');
+        }
+
+        // Initialize real-time updates
+        function initializeRealTimeUpdates() {
+            // Update system metrics every 30 seconds
+            setInterval(updateSystemMetrics, 30000);
+            
+            // Auto-refresh logs every 2 minutes
+            setInterval(() => {
+                if (!document.getElementById('logs-btn').disabled) {
+                    refreshLogs();
+                }
+            }, 120000);
+        }
+
+        // Real-time threat monitoring and notifications
+        function addNotification(type, message) {
+            const notification = {
+                id: notificationId++,
+                type: type,
+                message: message,
+                timestamp: new Date().toISOString()
+            };
+            notifications.unshift(notification);
+            if (notifications.length > 10) notifications.pop();
+            
+            // Update threat counters
+            if (type === 'threat') {
+                threatIntelligence.activeThreatCount++;
+                document.getElementById('live-threats').textContent = threatIntelligence.activeThreatCount;
+            }
+            if (type === 'blocked') {
+                threatIntelligence.blockedAttacks++;
+                document.getElementById('blocked-today').textContent = threatIntelligence.blockedAttacks;
+            }
+        }
+
+        // Simulate real-time threat detection
+        function simulateRealTimeThreats() {
+            const threatTypes = [
+                'SQL injection attempt blocked from IP 203.0.113.42',
+                'Brute force attack detected on login endpoint',
+                'Suspicious API requests from new geolocation',
+                'DDoS mitigation activated for web services',
+                'Malware signature detected in uploaded file',
+                'Anomalous data access pattern identified',
+                'Cross-site scripting attempt neutralized'
+            ];
+            
+            setInterval(() => {
+                if (Math.random() < 0.2) { // 20% chance every interval
+                    const threat = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+                    addNotification('blocked', threat);
+                    addNewLogEntry('security', threat);
+                }
+            }, 20000); // Every 20 seconds
+        }
+
+        // Add new log entries dynamically
+        function addNewLogEntry(type, message) {
+            const logsContainer = document.getElementById('security-logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${new Date().toLocaleString()}] ${type.toUpperCase()}: ${message}`;
+            logsContainer.insertBefore(logEntry, logsContainer.firstChild);
+            
+            // Keep only last 20 entries
+            while (logsContainer.children.length > 20) {
+                logsContainer.removeChild(logsContainer.lastChild);
+            }
+        }
+
+        // Threat Intelligence Dashboard Function
+        async function refreshThreatIntel() {
+            showLoading('threat-intel-btn', 'Updating Intelligence...');
+            
+            try {
+                await simulateApiDelay();
+                
+                // Simulate threat intelligence feeds
+                const threatCampaigns = [
+                    { name: 'APT-32 Phishing Campaign', severity: 'HIGH', iocs: 23, active: true },
+                    { name: 'Ransomware-as-a-Service (BlackCat)', severity: 'CRITICAL', iocs: 67, active: true },
+                    { name: 'Cryptomining Botnet', severity: 'MEDIUM', iocs: 156, active: false },
+                    { name: 'Banking Trojan Distribution', severity: 'HIGH', iocs: 89, active: true },
+                    { name: 'Zero-Day Exploit Kit', severity: 'CRITICAL', iocs: 12, active: true }
+                ];
+                
+                const activeCampaigns = threatCampaigns.filter(c => c.active);
+                const newIoCs = Math.floor(Math.random() * 300 + 200);
+                const riskScore = Math.floor(Math.random() * 40 + 60);
+                const threatLevel = riskScore > 80 ? 'CRITICAL' : riskScore > 60 ? 'ELEVATED' : 'MODERATE';
+                
+                let result = '🌐 GLOBAL THREAT INTELLIGENCE BRIEFING\n';
+                result += '═'.repeat(45) + '\n\n';
+                result += `📊 Intelligence Updated: ${new Date().toLocaleString()}\n`;
+                result += `🌍 Sources: 247 threat feeds\n`;
+                result += `⚡ Processing Speed: Real-time\n\n`;
+                
+                result += '🚨 ACTIVE THREAT CAMPAIGNS:\n';
+                activeCampaigns.forEach((campaign, index) => {
+                    const severityIcon = campaign.severity === 'CRITICAL' ? '💀' :
+                                       campaign.severity === 'HIGH' ? '🔴' : '🟡';
+                    result += `${index + 1}. ${severityIcon} ${campaign.name}\n`;
+                    result += `   📊 Severity: ${campaign.severity}\n`;
+                    result += `   🔍 IOCs: ${campaign.iocs} indicators\n`;
+                    result += `   ⚡ Status: ${campaign.active ? 'ACTIVE' : 'DORMANT'}\n\n`;
+                });
+                
+                result += '📈 THREAT LANDSCAPE ANALYSIS:\n';
+                result += `🎯 Global Risk Level: ${threatLevel}\n`;
+                result += `📊 Risk Score: ${riskScore}/100\n`;
+                result += `🔍 New IOCs Today: ${newIoCs}\n`;
+                result += `⚠️ Active Campaigns: ${activeCampaigns.length}\n`;
+                result += `🌐 Geographic Hotspots: Eastern Europe, Southeast Asia\n`;
+                result += `🎭 Top Threat Actors: APT-29, APT-32, Lazarus Group\n\n`;
+                
+                result += '🛡️ RECOMMENDED ACTIONS:\n';
+                if (riskScore > 80) {
+                    result += '🔴 Implement enhanced monitoring\n';
+                    result += '🔴 Review incident response procedures\n';
+                    result += '🔴 Update threat hunting rules';
+                } else if (riskScore > 60) {
+                    result += '🟡 Monitor for campaign indicators\n';
+                    result += '🟡 Update security policies\n';
+                    result += '🟡 Conduct security awareness training';
+                } else {
+                    result += '🟢 Maintain current security posture\n';
+                    result += '🟢 Continue routine monitoring';
+                }
+                
+                // Update display elements
+                document.getElementById('global-threat-level').textContent = threatLevel;
+                document.getElementById('new-iocs').textContent = newIoCs.toLocaleString();
+                document.getElementById('active-campaigns').textContent = activeCampaigns.length;
+                document.getElementById('risk-score').textContent = `${riskScore}/100`;
+                
+                const resultType = riskScore > 80 ? 'error' : riskScore > 60 ? 'warning' : 'success';
+                displayResult('threat-intel-result', result, resultType);
+                
+            } catch (error) {
+                displayResult('threat-intel-result', `❌ Failed to update threat intelligence: ${error.message}`, 'error');
+            }
+            
+            hideLoading('threat-intel-btn', '🔄 Refresh Intelligence');
+        }
+
+        // Initialize the application when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeRealTimeUpdates();
+            simulateRealTimeThreats();
+            console.log('🛡️ Cloud Native Security Platform initialized');
+        });
+    </script>
+</body>
+</html>
