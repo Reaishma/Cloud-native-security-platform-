@@ -187,6 +187,8 @@ com.cloudnative
 - **Custom Dashboards**: Configurable monitoring dashboards
 - **Alert Management**: Multi-channel alerting (email, SMS, webhook)
 
+![monitoring and logging](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105457_1.jpg)
+
 ## Technical Specifications
 
 ### Framework & Dependencies
