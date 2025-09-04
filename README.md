@@ -172,6 +172,9 @@ com.cloudnative
 - **Threat Intelligence**: Integration with AWS threat intelligence feeds
 
 ### 🌐 Network Security
+
+![Global threat intelligence](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105447_1.jpg)
+
 - **AWS Network Firewall**: Layer 3/4 traffic filtering
 - **DDoS Protection**: Built-in DDoS mitigation
 - **Traffic Analysis**: Deep packet inspection capabilities
