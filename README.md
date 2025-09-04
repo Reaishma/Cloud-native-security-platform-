@@ -144,6 +144,9 @@ com.cloudnative
 - **Performance Monitoring**: Real-time metrics for encryption operations
 
 ### ☁️ Azure Resource Manager Integration
+
+![AZURE resource manager](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105329_1.jpg)
+
 - **Resource Discovery**: Automated discovery of Azure resource groups
 - **Subscription Management**: Multi-subscription support with tenant isolation
 - **Resource Monitoring**: Real-time status of Azure resources
