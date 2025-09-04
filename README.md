@@ -9,6 +9,8 @@
 
 Enterprise-grade Java Spring Boot web application providing comprehensive cloud security, monitoring, and governance capabilities across AWS and Azure platforms. Built with microservices architecture and cloud-native principles for scalable, secure, and resilient operations.
 
+![Overview](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105302_1.jpg)
+
 ## Project Structure
 
 ```
