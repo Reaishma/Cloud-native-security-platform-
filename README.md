@@ -159,6 +159,9 @@ com.cloudnative
 - **Compliance Monitoring**: Automated compliance checks
 
 ### 🛡️ Web Application Firewall (WAF)
+
+![AWS WAF](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105400_1.jpg)
+
 - **SQL Injection Protection**: Real-time detection and blocking
 - **Cross-Site Scripting (XSS) Prevention**: Advanced XSS filtering
 - **Rate Limiting**: Configurable rate limits per IP/user
