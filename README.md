@@ -153,6 +153,9 @@ com.cloudnative
 - **Cost Optimization**: Resource utilization analytics
 
 ### 🏢 AWS Organizations Integration
+
+![AWS Organisation](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105412_1.jpg)
+
 - **Account Management**: Centralized management of AWS accounts
 - **Policy Enforcement**: Service Control Policies (SCPs) implementation
 - **Billing Consolidation**: Unified billing across organization
