@@ -136,7 +136,7 @@ com.cloudnative
 
 ### 🔐 AWS Key Management Service (KMS) Integration
 
-!KMS integeration](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105316_1.jpg)
+![KMS integeration](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105316_1.jpg)
 
 - **Encryption/Decryption**: Secure data encryption using customer-managed keys
 - **Key Rotation**: Automated key rotation policies
