@@ -11,6 +11,10 @@ Enterprise-grade Java Spring Boot web application providing comprehensive cloud 
 
 ![Overview](https://github.com/Reaishma/Cloud-native-security-platform-/blob/main/Screenshot_20250904-105302_1.jpg)
 
+## Developer 🧑‍💻 
+
+**Reaishma N**
+
 ## Project Structure
 
 ```
@@ -416,7 +420,7 @@ http://localhost:5000
 
 ## License
 
-This enterprise application is proprietary software. All rights reserved.
+This application is licensed under  Apache License Version 2.0, January 2004.
 
 ## Contact Information
 
